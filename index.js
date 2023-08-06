@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 // Routes
-app.use(errorHandler);
+// app.use(errorHandler);
 app.use('/user', userRouter);
 app.use('/post', postRouter);
 app.use(authenticate)
