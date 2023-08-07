@@ -6,10 +6,9 @@ const authenticate = require("../Middlewares/authentication.middleware");
 const postRouter = express.Router();
 
 // Create a post
-postRouter.post("/api/create", async (req, res) => {
+postRouter.post("/api/create",authenticate, async (req, res) => {
   try {
     const { title, content } = req.body;
-    const token = req.headers.authorization.replace("Bearer ", "");
     const userId = req.body.userId;
     console.log(userId);
     const newPost = await posts.create({ title, content, userId });
