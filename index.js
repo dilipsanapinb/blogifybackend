@@ -8,7 +8,6 @@ const postRouter = require("./Routes/Post.route");
 const commentRouter = require("./Routes/Comment.route");
 
 // port
-const PORT = process.env.port || 5000;
 
 // Middlewares
 app.use(express.json());
@@ -26,7 +25,7 @@ app.use("/comment", commentRouter);
 sequelize
   .sync()
   .then(() => {
-    app.listen(PORT, async () => {
+    app.listen(5000, async () => {
       console.log(`Server is running on port: ${PORT}`);
     });
     console.log("Connected to Db");
