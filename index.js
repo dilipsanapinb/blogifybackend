@@ -6,11 +6,13 @@ const { userRouter } = require("./Routes/user.route");
 const errorHandler = require("./Middlewares/errorhandler.middleware");
 const postRouter = require("./Routes/Post.route");
 const commentRouter = require("./Routes/Comment.route");
+const cors = require("cors");
 
 // port
 
 // Middlewares
 app.use(express.json());
+app.use(cors());
 
 // Basic route
 app.get("/", (req, res) => {
