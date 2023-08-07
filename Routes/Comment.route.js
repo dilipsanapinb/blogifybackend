@@ -4,7 +4,7 @@ const authenticate = require("../Middlewares/authentication.middleware");
 const commentRouter = express.Router();
 
 // Create a new comment
-commentRouter.post("/api/comments", authenticate, async (req, res) => {
+commentRouter.post("/api/comments", async (req, res) => {
   try {
     const { comment, postId } = req.body;
     const userId = req.body.userId;
