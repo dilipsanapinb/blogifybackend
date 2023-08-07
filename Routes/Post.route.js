@@ -10,7 +10,7 @@ postRouter.post("/api/create", async (req, res) => {
   try {
     const { title, content } = req.body;
     // const userId = req.body.userId;
-    console.log(userId);
+    // console.log(userId);
     const newPost = await posts.create({ title, content });
     res.status(201).send({ message: "New post created", Post: newPost });
   } catch (error) {
