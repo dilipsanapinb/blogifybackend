@@ -6,14 +6,9 @@ const authenticate = require("../Middlewares/authentication.middleware");
 const commentRouter = express.Router();
 
 // Create a new comment
-commentRouter.post("/api/comments", async (req, res) => {
+commentRouter.post("/api/comments",authenticate, async (req, res) => {
   try {
     const { comment, postId } = req.body;
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    // verify the token
     try {
       const decodedToken = jwt.verify(token, secretKey);
       const userId = decodedToken.userId;
