@@ -24,11 +24,11 @@ postRouter.post("/api/create", async (req, res) => {
 // get all posts
 postRouter.get("/api/posts", async (req, res) => {
   try {
-    users.hasMany(posts, { foreignKey: 'userId' });
-    posts.belongsTo(users,{foreignKey:'userId'})
-    const allposts = await posts.findAll({
-      include:[users]
-    });
+    // users.hasMany(posts, { foreignKey: 'userId' });
+    // posts.belongsTo(users,{foreignKey:'userId'})
+    // const allposts = await posts.findAll({
+    //   include:[users]
+    // });
     res.status(200).send({ message: "All posts Data", AllPosts: allposts });
   } catch (error) {
     console.log(error);
