@@ -1,5 +1,7 @@
 const express = require("express");
 const { sequelize, users, posts, comments } = require("../models");
+const jwt = require("jsonwebtoken");
+const secretKey = process.env.secrete; ;
 const authenticate = require("../Middlewares/authentication.middleware");
 const commentRouter = express.Router();
 
@@ -7,12 +9,28 @@ const commentRouter = express.Router();
 commentRouter.post("/api/comments", async (req, res) => {
   try {
     const { comment, postId } = req.body;
-    const userId = req.body.userId;
+    const token = req.headers.authorization;
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    // verify the token
+    try {
+      // Verify the token to extract the user information (userId)
+      const decodedToken = jwt.verify(token.replace("Bearer ", ""), secretKey);
+      const userId = decodedToken.userId;
 
-    const newComment = await comments.create({ comment, postId, userId });
-    res
-      .status(201)
-      .json({ message: "Comment created successfully", comment: newComment });
+      // Your code to save the comment using the extracted userId
+      const newComment = await comments.create({ comment, postId, userId });
+
+      return res.status(201).json({
+        message: "Comment created successfully",
+        comment: newComment,
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
   } catch (error) {
     console.log(error);
     res
