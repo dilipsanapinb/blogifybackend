@@ -18,7 +18,6 @@ app.get("/", (req, res) => {
     res.status(200).json({ "message":"Welcome to the Blogify App:Express Yourself"});
 });
 
-Routes
 app.use(errorHandler)
 app.use("/user", userRouter);
 app.use("/post", postRouter);
