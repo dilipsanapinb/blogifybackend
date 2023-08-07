@@ -9,17 +9,15 @@ const commentRouter = express.Router();
 commentRouter.post("/api/comments", async (req, res) => {
   try {
     const { comment, postId } = req.body;
-    const token = req.headers.authorization;
+    const token = req.headers.authorization.split(" ")[1];
     if (!token) {
       return res.status(401).json({ message: "Unauthorized" });
     }
     // verify the token
     try {
-      // Verify the token to extract the user information (userId)
-      const decodedToken = jwt.verify(token.replace("Bearer ", ""), secretKey);
+      const decodedToken = jwt.verify(token, secretKey);
       const userId = decodedToken.userId;
 
-      // Your code to save the comment using the extracted userId
       const newComment = await comments.create({ comment, postId, userId });
 
       return res.status(201).json({
