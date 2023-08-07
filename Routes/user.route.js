@@ -53,9 +53,10 @@ userRouter.post("/api/login", async (req, res) => {
         }
         // console.log(user);
         let hashpass = user.password;
+        const secretKey = "Dilip";
         bcrypt.compare(password, hashpass, async function (err, result) {
             if (result) {
-                var token = jwt.sign({ userId: user.id }, process.env.secrete);
+                var token = jwt.sign({ userId: user.id },secretKey );
                 res.send({ msg: "Login is Successfull", token: token });
             } else {
                 res.status(401).send("Wrong Credential's");

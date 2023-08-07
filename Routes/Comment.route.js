@@ -6,13 +6,18 @@ const authenticate = require("../Middlewares/authentication.middleware");
 const commentRouter = express.Router();
 
 // Create a new comment
-commentRouter.post("/api/comments",authenticate, async (req, res) => {
+commentRouter.post("/api/comments", async (req, res) => {
   try {
     const { comment, postId } = req.body;
-    try {
-      const decodedToken = jwt.verify(token, secretKey);
-      const userId = decodedToken.userId;
+    const token = req.headers.authorization.split(" ")[1]; 
 
+    if (!token) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    try {
+      const secretKey = "Dilip";
+      const decodedToken =await jwt.verify(token, secretKey);
+      const userId = decodedToken.userId;
       const newComment = await comments.create({ comment, postId, userId });
 
       return res.status(201).json({
@@ -23,7 +28,6 @@ commentRouter.post("/api/comments",authenticate, async (req, res) => {
       console.log(error);
       return res.status(401).json({ message: "Unauthorized" });
     }
-    
   } catch (error) {
     console.log(error);
     res
