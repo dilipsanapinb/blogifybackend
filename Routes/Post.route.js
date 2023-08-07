@@ -1,6 +1,5 @@
 const express = require("express");
 const { sequelize, users, posts, comments } = require("../models");
-const jwt = require("jsonwebtoken");
 const secret='Dilip'
 const {Op}=require('sequelize')
 const authenticate = require("../Middlewares/authentication.middleware");
@@ -10,36 +9,26 @@ const postRouter = express.Router();
 postRouter.post("/api/create", async (req, res) => {
   try {
     const { title, content } = req.body;
-    const token = req.headers.authorization.split(" ")[1];
-    if (!token) {
-      return res.status(401).json({message:"Unauthorised:MMissing token"})
-    }
-    try {
-      const secretKey ='Dilip'
-      const decodedToken = await jwt.verify(token,secretKey);
-      const userId = decodedToken.userId;
-      const newPost = await posts.create({ title, content, userId });
-      res.status(201).send({ message: "New post created", Post: newPost });
-    } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .send({ message: "Something went wrong at creating the post" });
-    }
-    } catch (error) {
-      console.log(error);
-      res
-        .status(500)
-        .send({ message: "Something went wrong at creating the post" });
-    }
-  });
+    // const userId = req.body.userId;
+    console.log(userId);
+    const newPost = await posts.create({ title, content });
+    res.status(201).send({ message: "New post created", Post: newPost });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ message: "Something went wrong at creating the post" });
+  }
+});
 
 // get all posts
 postRouter.get("/api/posts", async (req, res) => {
   try {
-    // users.hasMany(posts, { foreignKey: 'userId' });
-    // posts.belongsTo(users,{foreignKey:'userId'})
-    const allposts = await posts.findAll();
+    users.hasMany(posts, { foreignKey: 'userId' });
+    posts.belongsTo(users,{foreignKey:'userId'})
+    const allposts = await posts.findAll({
+      include:[users]
+    });
     res.status(200).send({ message: "All posts Data", AllPosts: allposts });
   } catch (error) {
     console.log(error);
@@ -71,10 +60,10 @@ postRouter.get("/api/post/:id", async (req, res) => {
 
 postRouter.get('/api/searchposts/:search', async(req, res) => {
   try {
-    // users.hasMany(posts, { foreignKey: "userId" });
-    // posts.belongsTo(users, { foreignKey: "userId" });
+    users.hasMany(posts, { foreignKey: "userId" });
+    posts.belongsTo(users, { foreignKey: "userId" });
     const searchReasult = await posts.findAll({
-      // include: [users],
+      include: [users],
       where: {
         title: {
           [Op.like]:`%${req.params.search}%`,
@@ -92,7 +81,7 @@ postRouter.get('/api/searchposts/:search', async(req, res) => {
 })
 
 // edit a post
-postRouter.patch("/api/post/:id", authenticate, async (req, res) => {
+postRouter.patch("/api/post/:id", async (req, res) => {
   try {
     const postId = req.params.id;
     const updates = req.body;
@@ -117,7 +106,7 @@ postRouter.patch("/api/post/:id", authenticate, async (req, res) => {
 });
 
 // delete a post
-postRouter.delete("/api/post/:id", authenticate, async (req, res) => {
+postRouter.delete("/api/post/:id",  async (req, res) => {
   try {
     const postId = req.params.id;
     const post = await posts.findOne({ where: { id: postId } });

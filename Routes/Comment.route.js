@@ -9,25 +9,13 @@ const commentRouter = express.Router();
 commentRouter.post("/api/comments", async (req, res) => {
   try {
     const { comment, postId } = req.body;
-    const token = req.headers.authorization.split(" ")[1]; 
-
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
-    try {
-      const secretKey = "Dilip";
-      const decodedToken =await jwt.verify(token, secretKey);
-      const userId = decodedToken.userId;
-      const newComment = await comments.create({ comment, postId, userId });
-
-      return res.status(201).json({
-        message: "Comment created successfully",
-        comment: newComment,
-      });
-    } catch (error) {
-      console.log(error);
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+      // const userId = decodedToken.userId;
+      const newComment = await comments.create({ comment, postId});
+    return res.status(201).json({
+      message: "Comment created successfully",
+      comment: newComment,
+    });
+    
   } catch (error) {
     console.log(error);
     res
@@ -79,7 +67,6 @@ commentRouter.get("/api/comments/:commentId", async (req, res) => {
 // Update a comment by commentId
 commentRouter.put(
   "/api/comments/:commentId",
-  authenticate,
   async (req, res) => {
     try {
       const commentId = req.params.commentId;
@@ -115,7 +102,6 @@ commentRouter.put(
 // delete a comment
 commentRouter.delete(
   "/api/comments/:commentId",
-  authenticate,
   async (req, res) => {
     try {
       const commentId = req.params.commentId;
