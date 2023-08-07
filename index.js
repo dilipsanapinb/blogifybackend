@@ -1,6 +1,7 @@
 require("dotenv").config();
 const {sequelize} = require("./models");
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 const { userRouter } = require("./Routes/user.route");
 const errorHandler = require("./Middlewares/errorhandler.middleware");
@@ -8,11 +9,13 @@ const postRouter = require("./Routes/Post.route");
 const commentRouter = require("./Routes/Comment.route");
 const cors = require("cors");
 
-// port
-
+// Define the logger format 
+const loggerFormat = '[:date[clf]] :method :url :status :response-time ms';
 // Middlewares
 app.use(express.json());
 app.use(cors());
+app.use(morgan(loggerFormat));
+
 
 // Basic route
 app.get("/", (req, res) => {
